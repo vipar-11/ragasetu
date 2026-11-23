@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ragasetu — Classical Music Learning Studio</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <!-- Login Screen -->
+  <div id="login-screen" class="login-screen hidden">
+    <div class="login-card">
+      <div class="brand-mark">
+        <span class="brand-icon" aria-hidden="true">♪</span>
+        <div>
+          <h1>ragasetu</h1>
+          <p class="subtitle">Guru–Shishya Music Studio &amp; Lesson Vault</p>
+        </div>
+      </div>
+
+      <form id="login-form" class="stack">
+        <label>
+          <span>Username</span>
+          <input type="text" id="login-username" required autocomplete="username" placeholder="e.g. guru or ananya" />
+        </label>
+        <label>
+          <span>Password</span>
+          <input type="password" id="login-password" required autocomplete="current-password" placeholder="Enter password" />
+        </label>
+        <div id="login-error" class="error-banner hidden"></div>
+        <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+      </form>
+
+      <div class="demo-box">
+        <p class="demo-title">Demo Accounts (click to fill)</p>
+        <div class="demo-buttons">
+          <button type="button" class="btn btn-chip" data-user="guru" data-pass="guru123">Teacher (guru)</button>
+          <button type="button" class="btn btn-chip" data-user="ananya" data-pass="student123">Beginner (ananya)</button>
+          <button type="button" class="btn btn-chip" data-user="karthik" data-pass="student123">Intermediate (karthik)</button>
+          <button type="button" class="btn btn-chip" data-user="divya" data-pass="student123">Advanced (divya)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Authenticated App Shell -->
+  <div id="app-shell" class="app-shell hidden">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand-inline">
+          <span class="brand-icon small" aria-hidden="true">♪</span>
+          <div>
+            <span class="brand-name">ragasetu</span>
+            <span class="brand-tag">Music Learning Portal</span>
+          </div>
+        </div>
+
+        <nav class="nav-tabs" id="nav-tabs">
+          <button class="nav-tab active" data-tab="songs">Song Library</button>
+          <button class="nav-tab" data-tab="schedule">Class Schedule</button>
+          <button class="nav-tab" data-tab="updates">Class Updates</button>
+          <button class="nav-tab teacher-only hidden" data-tab="upload">Upload Song</button>
+          <button class="nav-tab teacher-only hidden" data-tab="students">Students</button>
+        </nav>
+
+        <div class="user-pill">
+          <div class="user-meta">
+            <span id="user-fullname" class="user-name"></span>
+            <span id="user-badge" class="badge"></span>
+          </div>
+          <button id="logout-btn" class="btn btn-ghost btn-sm">Sign Out</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <!-- TAB: SONG LIBRARY -->
+      <section id="tab-songs" class="tab-panel">
+        <div class="panel-header">
+          <div>
+            <h2>Song Library</h2>
+            <p class="muted">Browse compositions across all traditions, view lyrics, play audio/thalam videos, and download practice files.</p>
+          </div>
+        </div>
+
+        <div class="filters-bar">
+          <div id="category-pills" class="category-pills"></div>
+          <div class="filter-controls">
+            <input type="search" id="song-search" placeholder="Search title, ragam, thalam, composer..." />
+            <select id="song-level-filter">
+              <option value="All">All Levels</option>
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="songs-grid" class="cards-grid"></div>
+      </section>
+
+      <!-- TAB: CLASS SCHEDULE -->
+      <section id="tab-schedule" class="tab-panel hidden">
+        <div class="panel-header">
+          <div>
+            <h2>Class Schedule</h2>
+            <p class="muted">Weekly batches and upcoming practice sessions.</p>
+          </div>
+        </div>
+
+        <div class="teacher-only hidden card form-card" id="schedule-form-card">
+          <h3>Add Schedule Entry</h3>
+          <form id="schedule-form" class="grid-form">
+            <label>
+              <span>Class / Batch Title *</span>
+              <input type="text" name="title" required placeholder="e.g. Varnam Practice Batch" />
+            </label>
+            <label>
+              <span>Day or Date *</span>
+              <input type="text" name="day_or_date" required placeholder="e.g. Every Wednesday or Nov 18" />
+            </label>
+            <label>
+              <span>Time Slot *</span>
+              <input type="text" name="time_slot" required placeholder="e.g. 6:30 PM - 7:30 PM" />
+            </label>
+            <label>
+              <span>Target Level</span>
+              <select name="target_level">
+                <option value="All Levels">All Levels</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+              </select>
+            </label>
+            <label class="full-span">
+              <span>Location / Meeting Link</span>
+              <input type="text" name="location_or_link" placeholder="e.g. Studio Room A or Zoom link" />
+            </label>
+            <label class="full-span">
+              <span>Notes</span>
+              <textarea name="notes" rows="2" placeholder="Optional preparation notes"></textarea>
+            </label>
+            <div class="full-span">
+              <button type="submit" class="btn btn-primary">Add to Schedule</button>
+            </div>
+          </form>
+        </div>
+
+        <div id="schedule-list" class="stack-list"></div>
+      </section>
+
+      <!-- TAB: CLASS UPDATES -->
+      <section id="tab-updates" class="tab-panel hidden">
+        <div class="panel-header">
+          <div>
+            <h2>Class Updates &amp; Announcements</h2>
+            <p class="muted">Teacher announcements, practice instructions, and downloadable handouts.</p>
+          </div>
+        </div>
+
+        <div class="teacher-only hidden card form-card" id="update-form-card">
+          <h3>Post Class Update</h3>
+          <form id="update-form" class="grid-form">
+            <label>
+              <span>Title *</span>
+              <input type="text" name="title" required placeholder="e.g. Weekend Practice Notes" />
+            </label>
+            <label>
+              <span>Target Level</span>
+              <select name="target_level">
+                <option value="All Levels">All Levels</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+              </select>
+            </label>
+            <label class="full-span">
+              <span>Message *</span>
+              <textarea name="message" rows="3" required placeholder="Share class updates, homework, or event details..."></textarea>
+            </label>
+            <label class="full-span">
+              <span>Optional Attachment (PDF, image, audio, notes)</span>
+              <input type="file" name="attachment" />
+            </label>
+            <div class="full-span">
+              <button type="submit" class="btn btn-primary">Post Update</button>
+            </div>
+          </form>
+        </div>
+
+        <div id="updates-list" class="stack-list"></div>
+      </section>
+
+      <!-- TAB: UPLOAD SONG (TEACHER ONLY) -->
+      <section id="tab-upload" class="tab-panel hidden">
+        <div class="panel-header">
+          <div>
+            <h2>Upload a New Song</h2>
+            <p class="muted">Classify the song into its bucket and attach up to 4 learning components.</p>
+          </div>
+        </div>
+
+        <form id="upload-song-form" class="card form-card stack">
+          <div class="grid-form">
+            <label>
+              <span>Song Title *</span>
+              <input type="text" name="title" required placeholder="e.g. Vatapi Ganapatim Bhaje" />
+            </label>
+            <label>
+              <span>Category / Bucket *</span>
+              <select name="category" id="upload-category" required></select>
+            </label>
+            <label>
+              <span>Ragam</span>
+              <input type="text" name="ragam" placeholder="e.g. Hamsadhwani" />
+            </label>
+            <label>
+              <span>Thalam</span>
+              <input type="text" name="thalam" placeholder="e.g. Adi" />
+            </label>
+            <label>
+              <span>Composer</span>
+              <input type="text" name="composer" placeholder="e.g. Muthuswami Dikshitar" />
+            </label>
+            <label>
+              <span>Student Level</span>
+              <select name="target_level">
+                <option value="All Levels">All Levels</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="component-box">
+            <h4>1. Lyrics</h4>
+            <label>
+              <span>Lyrics Text (viewable directly in app)</span>
+              <textarea name="lyrics_text" rows="5" placeholder="Paste Pallavi, Anupallavi, Charanam lyrics here..."></textarea>
+            </label>
+            <label>
+              <span>Or Upload Lyrics File (.txt, .pdf, .docx, image)</span>
+              <input type="file" name="lyrics_file" accept=".txt,.pdf,.doc,.docx,.png,.jpg,.jpeg" />
+            </label>
+          </div>
+
+          <div class="component-box">
+            <h4>2. Full Audio Recording</h4>
+            <label>
+              <span>Upload Full Song Audio (.mp3, .wav, .m4a, .ogg)</span>
+              <input type="file" name="full_audio" accept="audio/*" />
+            </label>
+          </div>
+
+          <div class="component-box">
+            <h4>3. Video Recording of Thalam</h4>
+            <label>
+              <span>Upload Thalam Demonstration Video (.mp4, .mov, .webm)</span>
+              <input type="file" name="thalam_video" accept="video/*" />
+            </label>
+          </div>
+
+          <div class="component-box">
+            <div class="component-header">
+              <h4>4. Multi-Part Audio Recordings</h4>
+              <button type="button" id="add-multipart-btn" class="btn btn-secondary btn-sm">+ Add Part</button>
+            </div>
+            <p class="muted small-text">Upload separate audio clips for Pallavi, Anupallavi, Charanam, Chittaswaram, etc.</p>
+            <div id="multipart-rows" class="stack"></div>
+          </div>
+
+          <label>
+            <span>Teacher Notes</span>
+            <textarea name="notes" rows="2" placeholder="Optional practice tips, sruti, or tempo guidance..."></textarea>
+          </label>
+
+          <div id="upload-status" class="status-banner hidden"></div>
+          <div>
+            <button type="submit" class="btn btn-primary">Publish Song</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- TAB: STUDENTS (TEACHER ONLY) -->
+      <section id="tab-students" class="tab-panel hidden">
+        <div class="panel-header">
+          <div>
+            <h2>Students &amp; Access</h2>
+            <p class="muted">Create student logins and assign their current learning level.</p>
+          </div>
+        </div>
+
+        <div class="card form-card">
+          <h3>Add Student / User</h3>
+          <form id="user-form" class="grid-form">
+            <label>
+              <span>Full Name *</span>
+              <input type="text" name="full_name" required placeholder="e.g. Meera Sundaram" />
+            </label>
+            <label>
+              <span>Username *</span>
+              <input type="text" name="username" required placeholder="e.g. meera" />
+            </label>
+            <label>
+              <span>Password *</span>
+              <input type="password" name="password" required placeholder="Initial password" />
+            </label>
+            <label>
+              <span>Role</span>
+              <select name="role" id="new-user-role">
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+              </select>
+            </label>
+            <label id="new-user-level-wrap">
+              <span>Student Level</span>
+              <select name="level">
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+              </select>
+            </label>
+            <div class="full-span">
+              <button type="submit" class="btn btn-primary">Create Account</button>
+            </div>
+          </form>
+        </div>
+
+        <div id="users-list" class="stack-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Song Detail Modal -->
+  <div id="song-modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <span id="modal-category" class="badge badge-accent"></span>
+          <span id="modal-level" class="badge"></span>
+          <h2 id="modal-title"></h2>
+          <p id="modal-meta" class="muted"></p>
+        </div>
+        <button id="modal-close" class="btn btn-ghost" aria-label="Close">✕</button>
+      </div>
+      <div id="modal-body" class="modal-body stack"></div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
+
